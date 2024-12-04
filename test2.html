@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test 1</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .status-bar-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-bar {
+            width: 33%; /* 1 of 3 */
+            height: 20px;
+            background-color: #007BFF;
+            text-align: center;
+            line-height: 20px;
+            color: #ffffff;
+            font-size: 0.9em;
+        }
+
+        button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1></h1>
+    <p> Voor dit experiment is het van belang dat uw geluid aan staat. Deze test duurt 60 seconden. Probeer in deze 60 seconden zo snel mogelijk de tekst over te typen. Als een karakter groen is, heeft u deze correct getypt. Als een karakter rood is, heeft u het verkeerde karakter getypt. U dient dan het juiste karakter te typen voordat u verder kunt.</p>
+    <div class="status-bar-container">
+        <div class="status-bar"></div>
+    </div>
+    <button onclick="navigateToNextPage()">Volgende</button>
+
+    <script>
+        function navigateToNextPage() {
+            // Get the user ID and test order from the URL
+            const params = new URLSearchParams(window.location.search);
+            const userId = params.get('userId');
+            const testOrder = JSON.parse(decodeURIComponent(params.get('testOrder')));
+
+            if (userId && testOrder && testOrder.length > 0) {
+                // Check the first item in the test order array and navigate accordingly
+                if (testOrder[1] === 'normal') {
+                    window.location.href = `typetest1.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
+                } else if (testOrder[1] === 'notification') {
+                    window.location.href = `typetest2.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
+                } else if (testOrder[1] === 'sound') {
+                    window.location.href = `typetest3.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
+                } else {
+                    alert('Error: Unrecognized first test in the order.');
+                }
+            } else {
+                alert('User ID or test order not found. Please ensure you are linked to the page with valid parameters.');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        /* h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            top: 5%;
+        } */
+
+        form {
+            width: 100%;
+            max-width: 400px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            top: 15%;
+        }
+
+        label {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            padding: 10px 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .option.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- <h1>Enquête</h1> -->
+    <form id="survey-form">
+        <div class="question" data-question="1">
+            <label>Wat is uw leeftijd?</label>
+            <div class="options" id="age-options">
+                <div class="option" data-value="10-19">10-19</div>
+                <div class="option" data-value="20-29">20-29</div>
+                <div class="option" data-value="30-39">30-39</div>
+                <div class="option" data-value="40-49">40-49</div>
+                <div class="option" data-value="50-59">50-59</div>
+                <div class="option" data-value="60+">60+</div>
+            </div>
+        </div>
+
+        <div class="question hidden" data-question="2">
+            <label>Heeft u uw notificaties aan staan?</label>
+            <div class="options" id="notifications-options">
+                <div class="option" data-value="On">Aan</div>
+                <div class="option" data-value="Off">Uit</div>
+            </div>
+        </div>
+
+        <div class="question hidden" data-question="3">
+            <label>Staat het geluid bij notificaties aan?</label>
+            <div class="options" id="sound-options">
+                <div class="option" data-value="On">Aan</div>
+                <div class="option" data-value="Off">Uit</div>
+            </div>
+        </div>
+
+        <div class="question hidden" data-question="4">
+            <label>Wat is de schermtijd op uw smartphone per dag?</label>
+            <div class="options" id="screentime-options">
+                <div class="option" data-value="<30 minuten">Minder dan 30 minuten</div>
+                <div class="option" data-value="30 minuten - 1 uur">30 minuten - 1 uur</div>
+                <div class="option" data-value="1-2 uren">1-2 uren</div>
+                <div class="option" data-value="2-3 uren">2-3 uren</div>
+                <div class="option" data-value="3-4 uren">3-4 uren</div>
+                <div class="option" data-value="4-5 uren">4-5 uren</div>
+                <div class="option" data-value="5-6 uren">5-6 uren</div>
+                <div class="option" data-value="6-7 uren">6-7 uren</div>
+                <div class="option" data-value="7+ uren">7+ uren</div>
+            </div>
+        </div>
+
+        <button type="button" id="next-btn">Volgende</button>
+    </form>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        
+        // De volgende informatie is vervangen met '...'
+        const firebaseConfig = {
+            apiKey: "...",
+            authDomain: "...",
+            projectId: "...",
+            storageBucket: "...",
+            messagingSenderId: "...",
+            appId: "..."
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);   
+
+        const questions = document.querySelectorAll('.question');
+        const nextBtn = document.getElementById('next-btn');
+        let currentQuestion = 0;
+        const selections = {};
+
+        function showQuestion(index) {
+            questions.forEach((q, i) => {
+                q.classList.toggle('hidden', i !== index);
+            });
+        }
+
+        document.querySelectorAll('.options').forEach(group => {
+            group.addEventListener('click', (event) => {
+                if (event.target.classList.contains('option')) {
+                    const groupId = group.id;
+                    const value = event.target.getAttribute('data-value');
+                    selections[groupId.replace('-options', '')] = value;
+
+                    Array.from(group.children).forEach(opt => opt.classList.remove('selected'));
+                    event.target.classList.add('selected');
+                }
+            });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestion === 1 && selections.notifications === "Off") {
+                currentQuestion += 2; // Skip the sound question
+            } else {
+                currentQuestion++;
+            }
+
+            if (currentQuestion < questions.length) {
+                showQuestion(currentQuestion);
+            } else {
+                submitSurvey();
+            }
+        });
+
+        async function submitSurvey() {
+            const userId = generateUUID();
+
+            if (!selections.age || !selections.notifications || !selections.screentime || (selections.notifications === "On" && !selections.sound)) {
+                alert('Vul alle vragen in!');
+                currentQuestion = 0;
+                showQuestion(currentQuestion);
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "survey_responses"), {
+                    userId,
+                    ...selections,
+                    timestamp: serverTimestamp()
+                });
+                window.location.href = `test1.html?userId=${userId}`;
+            } catch (error) {
+                console.error("Error saving survey: ", error);
+                alert("Er is iets misgegaan. Probeer opnieuw.");
+            }
+        }
+
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        showQuestion(currentQuestion);
+    </script>
+</body>
+</html>

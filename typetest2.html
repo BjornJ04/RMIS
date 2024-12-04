@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.5;
+            color: #333;
+            max-width: 600px;
+            text-align: justify;
+        }
+
+        #sentence {
+            font-size: 1.5em;
+            font-family: monospace;
+            color: #ffffff;
+            background: #000000;
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20%;
+            margin-bottom: 10px;
+            overflow-x: auto;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        textarea {
+            width: 100%;
+            max-width: 600px;
+            height: 10px;
+            padding: 10px;
+            font-size: 1.2em;
+            font-family: monospace;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        #timer {
+            font-size: 1.5em;
+            color: #000000;
+        }
+
+        /* Position the notification images at the top */
+        #notification {
+            position: fixed;
+            top: 1%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            text-align: center;
+            width: 95%;  /* Set width to 90% of the screen */
+            max-width: 900px; /* Optionally, limit the max width */
+        }
+
+        #notification img {
+            width: 100%;  /* Ensure the image takes up the full width of the container */
+            max-height: 100px;
+            object-fit: contain; /* Ensures the image doesn't stretch if it's wider than the container */
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="sentence"></div>
+    <textarea id="typed-text" placeholder="Klik hier om te typen" autocorrect="off" autocomplete="off" spellcheck="false"></textarea><br><br>
+    <p id="timer"></p>
+    <div id="notification"></div>
+    <p id="result"></p>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // Firebase configuration
+        // De volgende informatie is vervangen met '...'
+        const firebaseConfig = {
+            apiKey: "...",
+            authDomain: "...",
+            projectId: "...",
+            storageBucket: "...",
+            messagingSenderId: "...",
+            appId: "..."
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Get userId from URL
+        const userId = new URLSearchParams(window.location.search).get('userId');
+        const testOrderString = new URLSearchParams(window.location.search).get('testOrder');
+        const testOrder = testOrderString ? JSON.parse(testOrderString) : [];
+
+        // Predefined sentences
+        const sentences = [
+            "De stad is een bruisend netwerk van straten en pleinen, gevuld met de geluiden van voetstappen en verkeer. Terwijl je door de drukte beweegt, merk je de geur van vers gebakken brood en koffie op uit de cafés langs de weg. De oude gebouwen vertellen verhalen van vervlogen tijden, met gevels die verweerd zijn door regen en zon. Mensen met verschillende gezichten en accenten komen en gaan, hun leven een constant stroom van beweging en verandering. Op een plein, omringd door bomen, rust een bron die het geluid van stromend water toevoegt aan de stadssymfonie.",
+            "Het bos is een wereld op zich, met schaduwen die dan weer donker en dan weer licht zijn. Terwijl je verder het bos in loopt, hoor je het gekwaak van kikkers en het zachte geklep van een specht die aan een boom tikt. De lucht is vochtig en gevuld met de geur van mos en aarde. Tussen de bomen zie je af en toe een schichtige ree of een eekhoorn die zich een weg baant door de bladeren. De paden zijn kronkelig en bedekt met gevallen takken, maar brengen je steeds verder de natuur in. Aan het einde van het pad ligt een klein meertje dat glinstert in het zonlicht.",
+            "Een zomerse middag aan zee is een moment van vrijheid en vreugde. De zon schijnt fel en weerspiegelt in het glinsterende water, terwijl de golven zachtjes breken op het zand. Kinderen spelen in de branding, hun gelach vermengd met het geruis van de zee. De zeewind brengt een vleugje zout met zich mee en blaast je haren wijd uit. Schelpen en kleine steentjes liggen verspreid over het strand, waar een enkele zeemeeuw nieuwsgierig voorbij vliegt. Op de achtergrond klinkt de roep van de meeuwen en de klanken van een strandtent, die uitnodigt voor een verkoelend drankje.",
+            "De stadsvijver is een rustige plek, verborgen tussen de hoge gebouwen en drukke straten. Het water is kalm en reflecteert de wolken die langzaam voorbij trekken. Eenden drijven rond, hun zachte gekwaak klinkt als een melodie in de stilte. Een houten bruggetje steekt het water over, waar je een moment kunt pauzeren en naar de visjes onder je voeten kunt kijken. Bomen langs de oever maken lange schaduwen die het water verfrissen. Op een bank zit een man met een boek, terwijl een jogger langs de rand rent, het ritme van zijn ademhaling synchroniserend met de stad.",
+            "De ochtend op de boerderij begint vroeg, met het gekraai van de haan en het geluid van koeien die ongeduldig loeien. De geur van hooi en vers gras mengt zich met de geur van ochtendmist. De zon komt langzaam op en kleurt de lucht oranje en roze, terwijl de lucht nog koel aanvoelt. Varkens wroeten in de modder en schapen staan rustig te grazen. Een boer loopt over het erf, de handen stevig in de broekzakken terwijl hij kijkt naar zijn land dat zich uitstrekt onder het ochtendlicht. De stilte wordt alleen verbroken door het geknor van de varkens en het geklap van de koeienstaarten."
+      ];
+
+        // Select a random sentence
+        const sentence = sentences[Math.floor(Math.random() * sentences.length)];
+        const sentenceContainer = document.getElementById('sentence');
+        sentenceContainer.innerHTML = sentence;
+
+        // Initialize counters
+        let errors = 0;
+        let backspaces = 0;
+        let startTime = null;
+        let blocks = 0;
+        let lastErrorIndex = -1;  // Keeps track of the last position of an error
+
+        // Start the timer
+        const timeLimit = 60; // Time limit in seconds
+        let timeRemaining = timeLimit;
+
+        const timerElement = document.getElementById('timer');
+        // timerElement.textContent = `Tijd: ${timeRemaining}s`;
+
+        const timerInterval = setInterval(() => {
+            timeRemaining--;
+            // timerElement.textContent = `Tijd: ${timeRemaining}s`;
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                clearInterval(notificationInterval);
+                submitTest(); // Automatically submit the test
+            }
+        }, 1000);
+
+        // Highlight and track typed text
+        const typedText = document.getElementById('typed-text');
+        typedText.addEventListener('input', (event) => {
+            const typedValue = typedText.value;
+            let correctText = '';
+            errors = 0;
+
+            for (let i = 0; i < sentence.length; i++) {
+                if (i < typedValue.length) {
+                    if (typedValue[i] === sentence[i]) {
+                        if (typedValue[i] === ' ') {
+                            // Correct space is not highlighted
+                            correctText += ' ';
+                        } else {
+                            // Correct character is highlighted in green
+                            correctText += `<span style="color: #90EE90;">${sentence[i]}</span>`;
+                        }
+                    } else {
+                        // Display incorrect characters (including spaces)
+                        if (sentence[i] === ' ') {
+                            correctText += `<span style="color: red;">_</span>`;
+                        } else {
+                            correctText += `<span style="color: red;">${sentence[i]}</span>`;
+                        }
+                        errors++;
+                        // If an error occurs at a new position, increment the block counter
+                        if (lastErrorIndex !== i) {
+                            lastErrorIndex = i;
+                            blocks++;
+                        }
+                        // Reset the textarea to show up to the current position (handle backspace correctly)
+                        typedText.value = typedValue.substring(0, i);
+                        break;
+                    }
+                } else {
+                    // Handle remaining untyped characters
+                    if (sentence[i] === ' ') {
+                        correctText += ' ';
+                    } else {
+                        correctText += sentence[i];
+                    }
+                }
+            }
+
+            sentenceContainer.innerHTML = correctText;
+
+            // Scroll to center the last typed character
+            const currentPosition = typedValue.length;
+            const charWidth = 12;
+            const containerWidth = sentenceContainer.clientWidth;
+
+            const totalTextWidth = sentence.length * charWidth;
+            const centerOffset = (containerWidth / 2) - (charWidth / 2);
+
+            const scrollPosition = (currentPosition * charWidth) - centerOffset;
+            sentenceContainer.scrollLeft = Math.max(0, Math.min(scrollPosition, totalTextWidth - containerWidth));
+        });
+
+        // Track backspaces
+        typedText.addEventListener('keydown', (event) => {
+            if (event.key === 'Backspace') backspaces++;
+        });
+
+
+
+        // Show a random notification with an image
+        const notificationElement = document.getElementById('notification');
+        const notificationImages = [
+            "images/notifications/email.png",
+            "images/notifications/linkedin.png",
+            "images/notifications/whatsapp.png"
+        ];
+
+        const showRandomNotification = () => {
+            const randomImage = notificationImages[Math.floor(Math.random() * notificationImages.length)];
+            notificationElement.innerHTML = `<img src="${randomImage}" alt="Notification">`;
+
+
+            // Clear the notification after 5 seconds
+            setTimeout(() => {
+                notificationElement.innerHTML = "";
+            }, 5000);
+        };
+
+        // Trigger notifications at random intervals
+        const notificationInterval = setInterval(() => {
+            if (timeRemaining > 0) {
+                showRandomNotification();
+            }
+        }, Math.random() * 5000 + 10000); // Random interval between 10-15 seconds
+
+        // Submit test results
+        // Submit test results
+        async function submitTest() {
+            const typingTime = new Date().getTime() - startTime;
+            const wordsTyped = typedText.value.trim().split(' ').length;
+            const wpm = Math.round((wordsTyped / (typingTime / 60000)));
+
+            try {
+                await addDoc(collection(db, "typing_tests_notifications"), {
+                    userId,
+                    sentence, // The provided sentence for the test
+                    typedSentence: typedText.value.trim(), // Add the typed sentence
+                    typingTime,
+                    testOrder,
+                    wordsTyped,
+                    blocks,
+                    timestamp: serverTimestamp()
+                });
+                if (userId && testOrder && testOrder.length > 0) {
+                    // Check the first item in the test order array and navigate accordingly
+                    if (testOrder[0] === 'notification') {
+                        window.location.href = `test2.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
+                    } else if (testOrder[1] === 'notification') {
+                        window.location.href = `test3.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
+                    } else if (testOrder[2] === 'notification') {
+                        window.location.href = `results.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
+                    }
+                }
+            } catch (e) {
+                console.error("Error saving typing test data: ", e);
+                alert("Er is iets misgegaan. Probeer opnieuw.");
+            }
+        }
+    </script>
+</body>
+</html>

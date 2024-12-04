@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Screen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align items from the top */
+            align-items: center;
+            text-align: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+        }
+
+        img {
+            max-width: 60%;
+            height: auto;
+            margin-top: 20%; /* Space from the top */
+        }
+
+        h1 {
+            font-size: 1.2em;
+            margin: 20px 0;
+            margin-left: 5%;
+            margin-right: 5%;
+            margin-top: 10%;
+        }
+
+        p {
+            font-size: 1.1em;
+            margin: 0 0 30px;
+            color: #555;
+            text-align: justify;
+            margin-top: 5%;
+            margin-left: 10%;
+            margin-right: 10%;
+            margin-bottom: 5%;
+        }
+
+        label {
+            font-size: 1em;
+            color: #333;
+            margin: 20px 0;
+            display: block;
+        }
+
+        label a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        label a:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #FFFFFF;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <img src="uva.png" alt="Welcome Image">
+    <h1>Fijn dat u mee wilt doen aan dit experiment</h1>
+    <p>Voor het vak Research Methods for Interactive Systems van de bachelor Informatiekunde aan de Universiteit van Amsterdam doen wij een onderzoek naar typsnelheid. Dit experiment bestaat uit vier korte onderdelen, elk met een geschatte duur van ongeveer één minuut. Alle gegevens die tijdens dit onderzoek worden verzameld, worden volledig anoniem verwerkt.</p>
+
+    <label>
+        <input type="checkbox" id="terms-checkbox"> Ik ga akkoord met de 
+        <a href="consent_form.html" target="_blank">voorwaarden</a>.
+    </label>
+
+    <button id="start-button" disabled>Volgende</button>
+
+    <script>
+        const checkbox = document.getElementById('terms-checkbox');
+        const startButton = document.getElementById('start-button');
+
+        // Enable or disable the button based on the checkbox state
+        checkbox.addEventListener('change', () => {
+            startButton.disabled = !checkbox.checked;
+        });
+
+        // Show alert if button is pressed without checking the checkbox
+        startButton.addEventListener('click', () => {
+            if (!checkbox.checked) {
+                alert('U moet akkoord gaan met de voorwaarden voordat u verder kunt.');
+            } else {
+                window.location.href = 'survey.html';
+            }
+        });
+    </script>
+</body>
+</html>

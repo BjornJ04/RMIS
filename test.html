@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.5;
+            color: #333;
+            max-width: 600px;
+            text-align: justify;
+        }
+
+        #sentence {
+            font-size: 1.5em;
+            font-family: monospace;
+            color: #ffffff;
+            background: #000000;
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20%;
+            margin-bottom: 10px;
+            overflow-x: auto;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        textarea {
+            width: 100%;
+            max-width: 600px;
+            height: 10px;
+            padding: 10px;
+            font-size: 1.2em;
+            font-family: monospace;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        #timer {
+            font-size: 1.5em;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <div id="sentence"></div>
+    <textarea id="typed-text" placeholder="Klik hier om te typen" autocorrect="off" autocomplete="off" spellcheck="false"></textarea><br><br>
+    <!-- <p id="timer"></p> -->
+    <p id="result"></p>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // Firebase configuration
+        // De volgende informatie is vervangen met '...'
+        const firebaseConfig = {
+            apiKey: "...",
+            authDomain: "...",
+            projectId: "...",
+            storageBucket: "...",
+            messagingSenderId: "...",
+            appId: "..."
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Get userId from URL
+        const userId = new URLSearchParams(window.location.search).get('userId');
+        const testOrderString = new URLSearchParams(window.location.search).get('testOrder');
+        const testOrder = testOrderString ? JSON.parse(testOrderString) : [];
+
+        // Predefined sentences
+        const sentences = [
+            "Een bergwandeling is een reis vol uitdagingen en beloningen. Terwijl je omhoog klimt, voel je de frisse berglucht je longen vullen. De paden zijn smal, soms bezaaid met stenen, maar bieden steeds weer een nieuw uitzicht op de vallei beneden. Het geluid van een kabbelend beekje en het zachte geritsel van bladeren zorgen voor een rustgevende achtergrond. Af en toe zie je een arend hoog in de lucht cirkelen of een berggeit die behendig langs de rotsen beweegt. Boven aangekomen wordt je inspanning beloond met een adembenemend panorama, waarin de wereld even eindeloos lijkt.",
+            "Een dorpsmarkt is een plek vol kleuren, geuren en levendigheid. Kraampjes met vers fruit, groenten en geurige kruiden staan uitgestald in nette rijen. Het zachte geroezemoes van verkopers en kopers vult de lucht, afgewisseld met vrolijk gelach. Een bakker biedt knapperige broden aan, terwijl een kaasmaker trots zijn ambachtelijke kazen presenteert. De geur van versgebakken wafels lokt je naar een hoek waar kinderen genieten van een zoete traktatie. Overal zijn bloemen in felle kleuren die een glimlach op je gezicht toveren. Een wandeling over de markt is niet alleen een manier om boodschappen te doen, maar ook een ontmoeting met de ziel van het dorp.",
+            "In een botanische tuin lijkt het alsof je de wereld rondreist zonder je stad te verlaten. Paden slingeren langs exotische planten en bomen, met bordjes die hun Latijnse namen en herkomst onthullen. Een tropische kas vult zich met vochtige lucht en het zoete aroma van bloemen. Buiten bloeien rozen in een regenboog van kleuren, terwijl een vijver vol lelies zachtjes rimpelt in de bries. Vogels zingen in de bomen, en vlinders dansen van bloem naar bloem. Een bankje langs het pad nodigt uit om even te zitten en te genieten van de stilte. De botanische tuin is een plek waar natuur en kunst samenkomen in perfecte harmonie.",
+            "Een zomerstorm begint vaak met een dreigende stilte. Donkere wolken pakken zich samen aan de horizon, en een enkele bliksemschicht verlicht de lucht. De wind trekt aan en brengt de geur van regen met zich mee. Dan, plotseling, breekt de hemel open, en dikke regendruppels slaan op de grond. Het geluid van donder echoot in de verte, steeds dichterbij komend. De straten glanzen nat, en bladeren dansen wild in de wind. Ondanks de kracht van de storm is er iets betoverends aan het schouwspel van de natuur. Wanneer de regen stopt en de lucht weer opklaart, blijft er een gevoel van frisheid en hernieuwing achter.",
+            "Een avondwandeling door de stad onthult een andere kant van het leven. Lichten van etalages en straatlantaarns spiegelen zich in natte stoeptegels. Het zachte geroezemoes van gesprekken mengt zich met het geluid van muziek uit openstaande cafés. Mensen haasten zich naar huis, terwijl anderen ontspannen op een terras zitten met een glas wijn. De geur van versgebakken pizza en zoete gebakjes drijft vanuit een bistro naar buiten. Een straatartiest speelt gitaar, en voorbijgangers blijven even staan om te luisteren. In deze mix van drukte en sereniteit voelt de stad als een levend schilderij, vol verhalen die wachten om verteld te worden."
+      ];
+
+        // Select a random sentence
+        const sentence = sentences[Math.floor(Math.random() * sentences.length)];
+        const sentenceContainer = document.getElementById('sentence');
+        sentenceContainer.innerHTML = sentence;
+
+        // Initialize counters
+        let startTime = null;
+        let blocks = 0;
+        let lastErrorIndex = -1;  // Keeps track of the last position of an error
+
+        // Start the timer
+        const timeLimit = 60; // Time limit in seconds
+        let timeRemaining = timeLimit;
+
+        const timerElement = document.getElementById('timer');
+        const timerInterval = setInterval(() => {
+            timeRemaining--;
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                submitTest(); // Automatically submit the test
+            }
+        }, 1000);
+
+        // Highlight and track typed text
+        const typedText = document.getElementById('typed-text');
+        typedText.addEventListener('input', (event) => {
+            const typedValue = typedText.value;
+            let correctText = '';
+            errors = 0;
+
+            for (let i = 0; i < sentence.length; i++) {
+                if (i < typedValue.length) {
+                    if (typedValue[i] === sentence[i]) {
+                        if (typedValue[i] === ' ') {
+                            // Correct space is not highlighted
+                            correctText += ' ';
+                        } else {
+                            // Correct character is highlighted in green
+                            correctText += `<span style="color: #90EE90;">${sentence[i]}</span>`;
+                        }
+                    } else {
+                        // Display incorrect characters (including spaces)
+                        if (sentence[i] === ' ') {
+                            correctText += `<span style="color: red;">_</span>`;
+                        } else {
+                            correctText += `<span style="color: red;">${sentence[i]}</span>`;
+                        }
+                        errors++;
+                        // If an error occurs at a new position, increment the block counter
+                        if (lastErrorIndex !== i) {
+                            lastErrorIndex = i;
+                            blocks++;
+                        }
+                        // Reset the textarea to show up to the current position (handle backspace correctly)
+                        typedText.value = typedValue.substring(0, i);
+                        break;
+                    }
+                } else {
+                    // Handle remaining untyped characters
+                    if (sentence[i] === ' ') {
+                        correctText += ' ';
+                    } else {
+                        correctText += sentence[i];
+                    }
+                }
+            }
+
+            sentenceContainer.innerHTML = correctText;
+
+            // Scroll to center the last typed character
+            const currentPosition = typedValue.length;
+            const charWidth = 12;
+            const containerWidth = sentenceContainer.clientWidth;
+
+            const totalTextWidth = sentence.length * charWidth;
+            const centerOffset = (containerWidth / 2) - (charWidth / 2);
+
+            const scrollPosition = (currentPosition * charWidth) - centerOffset;
+            sentenceContainer.scrollLeft = Math.max(0, Math.min(scrollPosition, totalTextWidth - containerWidth));
+        });
+
+        // Track backspaces
+        typedText.addEventListener('keydown', (event) => {
+            if (event.key === 'Backspace') backspaces++;
+        });
+
+        // Submit typing test
+        async function submitTest() {
+            const typingTime = new Date().getTime() - startTime;
+            const wordsTyped = typedText.value.trim().split(' ').length;
+            const wpm = Math.round((wordsTyped / (typingTime / 60000)));
+
+            try {
+                await addDoc(collection(db, "typing_tests_test"), {
+                    userId,
+                    sentence, // The provided sentence for the test
+                    typedSentence: typedText.value.trim(), // Add the typed sentence
+                    typingTime,
+                    wordsTyped,
+                    testOrder,
+                    blocks,
+                    timestamp: serverTimestamp()
+                });
+                const params = new URLSearchParams(window.location.search);
+
+                if (userId && testOrder && testOrder.length > 0) {
+                    // Check the first item in the test order array and navigate accordingly
+                    if (testOrder[0] === 'normal') {
+                        window.location.href = `test2.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
+                    } else if (testOrder[1] === 'normal') {
+                        window.location.href = `test3.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
+                    } else if (testOrder[2] === 'normal') {
+                        window.location.href = `results.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
+                    }
+                }
+            } catch (e) {
+                console.error("Error saving typing test data: ", e);
+                alert(`Er is iets misgegaan: ${e.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
