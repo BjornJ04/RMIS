@@ -62,32 +62,12 @@
             font-size: 1.5em;
             color: #000000;
         }
-
-        /* Position the notification images at the top */
-        #notification {
-            position: fixed;
-            top: 1%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            text-align: center;
-            width: 95%;  /* Set width to 90% of the screen */
-            max-width: 900px; /* Optionally, limit the max width */
-        }
-
-        #notification img {
-            width: 100%;  /* Ensure the image takes up the full width of the container */
-            max-height: 100px;
-            object-fit: contain; /* Ensures the image doesn't stretch if it's wider than the container */
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
     <div id="sentence"></div>
     <textarea id="typed-text" placeholder="Klik hier om te typen" autocorrect="off" autocomplete="off" spellcheck="false"></textarea><br><br>
-    <p id="timer"></p>
-    <div id="notification"></div>
+    <!-- <p id="timer"></p> -->
     <p id="result"></p>
 
     <script type="module">
@@ -96,14 +76,13 @@
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
         // Firebase configuration
-        // De volgende informatie is vervangen met '...'
         const firebaseConfig = {
-            apiKey: "...",
-            authDomain: "...",
-            projectId: "...",
-            storageBucket: "...",
-            messagingSenderId: "...",
-            appId: "..."
+            apiKey: "AIzaSyCjLs8zagSFqr4U-iTEEcOcKAir5jVZae0",
+            authDomain: "rmis-a76d6.firebaseapp.com",
+            projectId: "rmis-a76d6",
+            storageBucket: "rmis-a76d6.firebasestorage.app",
+            messagingSenderId: "806918063566",
+            appId: "1:806918063566:web:7aa370d760cddcceb2d79f"
         };
 
         // Initialize Firebase
@@ -117,11 +96,11 @@
 
         // Predefined sentences
         const sentences = [
-            "Een boek lezen op een regenachtige middag is een moment van rust en overgave. Het geluid van de regen die tegen het raam tikt, mengt zich met het zachte geknisper van een open haard. De geur van natte aarde dringt binnen via een open raam en mengt zich met de geur van oud papier en leer. De bladzijden ritselen zachtjes terwijl je je verdiept in een ander leven, een andere tijd. De regen slaat tegen de vensterbank, maar het boek houdt je gevangen in zijn verhaal, een warme toevlucht in de grijze wereld daarbuiten.",
-            "De bergtop geeft een uitzicht dat je even de adem ontneemt. De lucht is ijl en koud, maar het uitzicht is adembenemend. Onder je zie je de wereld in golvende heuvels en diepe dalen, waar rivieren als zilveren linten door het landschap slingeren. De zon schijnt fel en verlicht de sneeuwvlokken die nog op de bergtoppen liggen. Het is stil, op het zachte ruisen van de wind na die je oren streelt. Een paar kleine vogels bewegen snel en behendig, hun vleugels fladderend tussen de rotsen. Het is een moment van overwinning, de beloning voor elke stap die je hebt gezet.",
-            "De drukte van de markt is een symfonie van geluiden en geuren. Mensen roepen hun waren aan, de geur van kruiden en vers fruit mengt zich met het geluid van tassen die ritselen. De zon werpt lange schaduwen van de marktkramen, terwijl een muzikant op zijn gitaar speelt en een paar toeschouwers nieuwsgierig toekijken. Je ziet mensen afdingen, glimlachen, en soms ruzie maken over de prijs van een appel of een handvol noten. Kinderen lachen en rennen rond, hun gelach vermengt zich met het gekraak van het karton en het geklop van de verkoper die de weegschaal afleest.",
-            "De avond valt over de stad en de lichten beginnen te branden. De straat verlicht zich in een gloed van goud en oranje, terwijl mensen zich haasten naar huis of een café inlopen. Het geluid van stemmen mengt zich met het zachte getik van regen, die gevallen is op de daken. Auto’s rijden voorbij, hun koplampen creëren een rivier van licht die zich slingert over het natte asfalt. De geur van natte stad en diesel dringt je neus binnen, en de lucht voelt fris en vernieuwend aan. Op een hoek staan de terrasjes, gevuld met mensen die hun avond bespreken, omringd door een zacht ruisen van gesprekken.",
-            "De ochtenden in de tuin zijn een magisch moment van nieuw begin. Het gras is bedekt met een dunne laag dauw die schittert in het vroege zonlicht. De geur van bloemen, mengsels van rozen, lavendel en madeliefjes, vult de lucht. Vlinders fladderen van bloem naar bloem, hun vleugels een wirwar van kleur. De bijen zoemen van bloem naar bloem, druk bezig met hun werk. Het zachte geluid van een tuinfontein creëert een rustgevend achtergrondgeluid. De wereld is nog kalm, als een verborgen paradijs voor degenen die vroeg genoeg zijn om het te zien."
+            "Een bergwandeling is een reis vol uitdagingen en beloningen. Terwijl je omhoog klimt, voel je de frisse berglucht je longen vullen. De paden zijn smal, soms bezaaid met stenen, maar bieden steeds weer een nieuw uitzicht op de vallei beneden. Het geluid van een kabbelend beekje en het zachte geritsel van bladeren zorgen voor een rustgevende achtergrond. Af en toe zie je een arend hoog in de lucht cirkelen of een berggeit die behendig langs de rotsen beweegt. Boven aangekomen wordt je inspanning beloond met een adembenemend panorama, waarin de wereld even eindeloos lijkt.",
+            "Een dorpsmarkt is een plek vol kleuren, geuren en levendigheid. Kraampjes met vers fruit, groenten en geurige kruiden staan uitgestald in nette rijen. Het zachte geroezemoes van verkopers en kopers vult de lucht, afgewisseld met vrolijk gelach. Een bakker biedt knapperige broden aan, terwijl een kaasmaker trots zijn ambachtelijke kazen presenteert. De geur van versgebakken wafels lokt je naar een hoek waar kinderen genieten van een zoete traktatie. Overal zijn bloemen in felle kleuren die een glimlach op je gezicht toveren. Een wandeling over de markt is niet alleen een manier om boodschappen te doen, maar ook een ontmoeting met de ziel van het dorp.",
+            "In een botanische tuin lijkt het alsof je de wereld rondreist zonder je stad te verlaten. Paden slingeren langs exotische planten en bomen, met bordjes die hun Latijnse namen en herkomst onthullen. Een tropische kas vult zich met vochtige lucht en het zoete aroma van bloemen. Buiten bloeien rozen in een regenboog van kleuren, terwijl een vijver vol lelies zachtjes rimpelt in de bries. Vogels zingen in de bomen, en vlinders dansen van bloem naar bloem. Een bankje langs het pad nodigt uit om even te zitten en te genieten van de stilte. De botanische tuin is een plek waar natuur en kunst samenkomen in perfecte harmonie.",
+            "Een zomerstorm begint vaak met een dreigende stilte. Donkere wolken pakken zich samen aan de horizon, en een enkele bliksemschicht verlicht de lucht. De wind trekt aan en brengt de geur van regen met zich mee. Dan, plotseling, breekt de hemel open, en dikke regendruppels slaan op de grond. Het geluid van donder echoot in de verte, steeds dichterbij komend. De straten glanzen nat, en bladeren dansen wild in de wind. Ondanks de kracht van de storm is er iets betoverends aan het schouwspel van de natuur. Wanneer de regen stopt en de lucht weer opklaart, blijft er een gevoel van frisheid en hernieuwing achter.",
+            "Een avondwandeling door de stad onthult een andere kant van het leven. Lichten van etalages en straatlantaarns spiegelen zich in natte stoeptegels. Het zachte geroezemoes van gesprekken mengt zich met het geluid van muziek uit openstaande cafés. Mensen haasten zich naar huis, terwijl anderen ontspannen op een terras zitten met een glas wijn. De geur van versgebakken pizza en zoete gebakjes drijft vanuit een bistro naar buiten. Een straatartiest speelt gitaar, en voorbijgangers blijven even staan om te luisteren. In deze mix van drukte en sereniteit voelt de stad als een levend schilderij, vol verhalen die wachten om verteld te worden."
       ];
 
         // Select a random sentence
@@ -141,19 +120,15 @@
         let timeRemaining = timeLimit;
 
         const timerElement = document.getElementById('timer');
-        // timerElement.textContent = `Tijd: ${timeRemaining}s`;
-
         const timerInterval = setInterval(() => {
             timeRemaining--;
-            // timerElement.textContent = `Tijd: ${timeRemaining}s`;
-
             if (timeRemaining <= 0) {
                 clearInterval(timerInterval);
-                clearInterval(notificationInterval);
                 submitTest(); // Automatically submit the test
             }
         }, 1000);
 
+        // Highlight and track typed text
         // Highlight and track typed text
         const typedText = document.getElementById('typed-text');
         typedText.addEventListener('input', (event) => {
@@ -200,15 +175,14 @@
 
             sentenceContainer.innerHTML = correctText;
 
-            // Calculate the scroll position to center the last typed character
+            // Scroll to center the last typed character
             const currentPosition = typedValue.length;
-            const charWidth = 12; // Approximate width of each character
+            const charWidth = 12;
             const containerWidth = sentenceContainer.clientWidth;
 
             const totalTextWidth = sentence.length * charWidth;
             const centerOffset = (containerWidth / 2) - (charWidth / 2);
 
-            // Scroll to center the last typed character
             const scrollPosition = (currentPosition * charWidth) - centerOffset;
             sentenceContainer.scrollLeft = Math.max(0, Math.min(scrollPosition, totalTextWidth - containerWidth));
         });
@@ -218,46 +192,14 @@
             if (event.key === 'Backspace') backspaces++;
         });
 
-        // Play a sound when a notification appears
-        const notificationSound = new Audio('sounds/notification.mp3');
-
-        // Show a random notification with an image
-        const notificationElement = document.getElementById('notification');
-        const notificationImages = [
-            "images/notifications/email.png",
-            "images/notifications/linkedin.png",
-            "images/notifications/whatsapp.png"
-        ];
-
-        const showRandomNotification = () => {
-            const randomImage = notificationImages[Math.floor(Math.random() * notificationImages.length)];
-            notificationElement.innerHTML = `<img src="${randomImage}" alt="Notification">`;
-
-            // Play the notification sound
-            notificationSound.play();
-
-            // Clear the notification after 5 seconds
-            setTimeout(() => {
-                notificationElement.innerHTML = "";
-            }, 5000);
-        };
-
-        // Trigger notifications at random intervals
-        const notificationInterval = setInterval(() => {
-            if (timeRemaining > 0) {
-                showRandomNotification();
-            }
-        }, Math.random() * 5000 + 10000); // Random interval between 10-15 seconds
-
-        // Submit test results
-        // Submit test results
+        // Submit typing test
         async function submitTest() {
             const typingTime = new Date().getTime() - startTime;
             const wordsTyped = typedText.value.trim().split(' ').length;
             const wpm = Math.round((wordsTyped / (typingTime / 60000)));
 
             try {
-                await addDoc(collection(db, "typing_tests_sound"), {
+                await addDoc(collection(db, "typing_tests"), {
                     userId,
                     sentence, // The provided sentence for the test
                     typedSentence: typedText.value.trim(), // Add the typed sentence
@@ -271,11 +213,11 @@
 
                 if (userId && testOrder && testOrder.length > 0) {
                     // Check the first item in the test order array and navigate accordingly
-                    if (testOrder[0] === 'sound') {
+                    if (testOrder[0] === 'normal') {
                         window.location.href = `test2.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
-                    } else if (testOrder[1] === 'sound') {
+                    } else if (testOrder[1] === 'normal') {
                         window.location.href = `test3.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
-                    } else if (testOrder[2] === 'sound') {
+                    } else if (testOrder[2] === 'normal') {
                         window.location.href = `results.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
                     }
                 }

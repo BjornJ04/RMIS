@@ -35,7 +35,7 @@
         }
 
         .status-bar {
-            width: 66%; /* 1 of 3 */
+            width: 33%; /* 1 of 3 */
             height: 20px;
             background-color: #007BFF;
             text-align: center;
@@ -62,7 +62,7 @@
 </head>
 <body>
     <h1></h1>
-    <p> Voor dit experiment is het van belang dat uw geluid aan staat. Deze test duurt 60 seconden. Probeer in deze 60 seconden zo snel mogelijk de tekst over te typen. Als een karakter groen is, heeft u deze correct getypt. Als een karakter rood is, heeft u het verkeerde karakter getypt. U dient dan het juiste karakter te typen voordat u verder kunt.</p>
+    <p> Voor dit experiment is het van belang dat uw geluid aan staat. Deze test duurt 60 seconden. Probeer in deze 60 seconden zo snel mogelijk de tekst over te typen. Als een karakter groen is, heeft u deze correct getypt. Als een karakter rood is, heeft u het verkeerde karakter getypt. U dient dan het juiste karakter te typen voordat u verder kunt. Tijdens de test kunnen notificaties gesimuleerd worden.</p>
     <div class="status-bar-container">
         <div class="status-bar"></div>
     </div>
@@ -77,11 +77,11 @@
 
             if (userId && testOrder && testOrder.length > 0) {
                 // Check the first item in the test order array and navigate accordingly
-                if (testOrder[2] === 'normal') {
+                if (testOrder[1] === 'normal') {
                     window.location.href = `typetest1.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
-                } else if (testOrder[2] === 'notification') {
+                } else if (testOrder[1] === 'notification') {
                     window.location.href = `typetest2.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
-                } else if (testOrder[2] === 'sound') {
+                } else if (testOrder[1] === 'sound') {
                     window.location.href = `typetest3.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
                 } else {
                     alert('Error: Unrecognized first test in the order.');

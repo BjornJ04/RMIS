@@ -96,14 +96,13 @@
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
         // Firebase configuration
-        // De volgende informatie is vervangen met '...'
         const firebaseConfig = {
-            apiKey: "...",
-            authDomain: "...",
-            projectId: "...",
-            storageBucket: "...",
-            messagingSenderId: "...",
-            appId: "..."
+            apiKey: "AIzaSyCjLs8zagSFqr4U-iTEEcOcKAir5jVZae0",
+            authDomain: "rmis-a76d6.firebaseapp.com",
+            projectId: "rmis-a76d6",
+            storageBucket: "rmis-a76d6.firebasestorage.app",
+            messagingSenderId: "806918063566",
+            appId: "1:806918063566:web:7aa370d760cddcceb2d79f"
         };
 
         // Initialize Firebase
@@ -117,11 +116,11 @@
 
         // Predefined sentences
         const sentences = [
-            "De stad is een bruisend netwerk van straten en pleinen, gevuld met de geluiden van voetstappen en verkeer. Terwijl je door de drukte beweegt, merk je de geur van vers gebakken brood en koffie op uit de cafés langs de weg. De oude gebouwen vertellen verhalen van vervlogen tijden, met gevels die verweerd zijn door regen en zon. Mensen met verschillende gezichten en accenten komen en gaan, hun leven een constant stroom van beweging en verandering. Op een plein, omringd door bomen, rust een bron die het geluid van stromend water toevoegt aan de stadssymfonie.",
-            "Het bos is een wereld op zich, met schaduwen die dan weer donker en dan weer licht zijn. Terwijl je verder het bos in loopt, hoor je het gekwaak van kikkers en het zachte geklep van een specht die aan een boom tikt. De lucht is vochtig en gevuld met de geur van mos en aarde. Tussen de bomen zie je af en toe een schichtige ree of een eekhoorn die zich een weg baant door de bladeren. De paden zijn kronkelig en bedekt met gevallen takken, maar brengen je steeds verder de natuur in. Aan het einde van het pad ligt een klein meertje dat glinstert in het zonlicht.",
-            "Een zomerse middag aan zee is een moment van vrijheid en vreugde. De zon schijnt fel en weerspiegelt in het glinsterende water, terwijl de golven zachtjes breken op het zand. Kinderen spelen in de branding, hun gelach vermengd met het geruis van de zee. De zeewind brengt een vleugje zout met zich mee en blaast je haren wijd uit. Schelpen en kleine steentjes liggen verspreid over het strand, waar een enkele zeemeeuw nieuwsgierig voorbij vliegt. Op de achtergrond klinkt de roep van de meeuwen en de klanken van een strandtent, die uitnodigt voor een verkoelend drankje.",
-            "De stadsvijver is een rustige plek, verborgen tussen de hoge gebouwen en drukke straten. Het water is kalm en reflecteert de wolken die langzaam voorbij trekken. Eenden drijven rond, hun zachte gekwaak klinkt als een melodie in de stilte. Een houten bruggetje steekt het water over, waar je een moment kunt pauzeren en naar de visjes onder je voeten kunt kijken. Bomen langs de oever maken lange schaduwen die het water verfrissen. Op een bank zit een man met een boek, terwijl een jogger langs de rand rent, het ritme van zijn ademhaling synchroniserend met de stad.",
-            "De ochtend op de boerderij begint vroeg, met het gekraai van de haan en het geluid van koeien die ongeduldig loeien. De geur van hooi en vers gras mengt zich met de geur van ochtendmist. De zon komt langzaam op en kleurt de lucht oranje en roze, terwijl de lucht nog koel aanvoelt. Varkens wroeten in de modder en schapen staan rustig te grazen. Een boer loopt over het erf, de handen stevig in de broekzakken terwijl hij kijkt naar zijn land dat zich uitstrekt onder het ochtendlicht. De stilte wordt alleen verbroken door het geknor van de varkens en het geklap van de koeienstaarten."
+            "Een boek lezen op een regenachtige middag is een moment van rust en overgave. Het geluid van de regen die tegen het raam tikt, mengt zich met het zachte geknisper van een open haard. De geur van natte aarde dringt binnen via een open raam en mengt zich met de geur van oud papier en leer. De bladzijden ritselen zachtjes terwijl je je verdiept in een ander leven, een andere tijd. De regen slaat tegen de vensterbank, maar het boek houdt je gevangen in zijn verhaal, een warme toevlucht in de grijze wereld daarbuiten.",
+            "De bergtop geeft een uitzicht dat je even de adem ontneemt. De lucht is ijl en koud, maar het uitzicht is adembenemend. Onder je zie je de wereld in golvende heuvels en diepe dalen, waar rivieren als zilveren linten door het landschap slingeren. De zon schijnt fel en verlicht de sneeuwvlokken die nog op de bergtoppen liggen. Het is stil, op het zachte ruisen van de wind na die je oren streelt. Een paar kleine vogels bewegen snel en behendig, hun vleugels fladderend tussen de rotsen. Het is een moment van overwinning, de beloning voor elke stap die je hebt gezet.",
+            "De drukte van de markt is een symfonie van geluiden en geuren. Mensen roepen hun waren aan, de geur van kruiden en vers fruit mengt zich met het geluid van tassen die ritselen. De zon werpt lange schaduwen van de marktkramen, terwijl een muzikant op zijn gitaar speelt en een paar toeschouwers nieuwsgierig toekijken. Je ziet mensen afdingen, glimlachen, en soms ruzie maken over de prijs van een appel of een handvol noten. Kinderen lachen en rennen rond, hun gelach vermengt zich met het gekraak van het karton en het geklop van de verkoper die de weegschaal afleest.",
+            "De avond valt over de stad en de lichten beginnen te branden. De straat verlicht zich in een gloed van goud en oranje, terwijl mensen zich haasten naar huis of een café inlopen. Het geluid van stemmen mengt zich met het zachte getik van regen, die gevallen is op de daken. Auto’s rijden voorbij, hun koplampen creëren een rivier van licht die zich slingert over het natte asfalt. De geur van natte stad en diesel dringt je neus binnen, en de lucht voelt fris en vernieuwend aan. Op een hoek staan de terrasjes, gevuld met mensen die hun avond bespreken, omringd door een zacht ruisen van gesprekken.",
+            "De ochtenden in de tuin zijn een magisch moment van nieuw begin. Het gras is bedekt met een dunne laag dauw die schittert in het vroege zonlicht. De geur van bloemen, mengsels van rozen, lavendel en madeliefjes, vult de lucht. Vlinders fladderen van bloem naar bloem, hun vleugels een wirwar van kleur. De bijen zoemen van bloem naar bloem, druk bezig met hun werk. Het zachte geluid van een tuinfontein creëert een rustgevend achtergrondgeluid. De wereld is nog kalm, als een verborgen paradijs voor degenen die vroeg genoeg zijn om het te zien."
       ];
 
         // Select a random sentence
@@ -200,14 +199,15 @@
 
             sentenceContainer.innerHTML = correctText;
 
-            // Scroll to center the last typed character
+            // Calculate the scroll position to center the last typed character
             const currentPosition = typedValue.length;
-            const charWidth = 12;
+            const charWidth = 12; // Approximate width of each character
             const containerWidth = sentenceContainer.clientWidth;
 
             const totalTextWidth = sentence.length * charWidth;
             const centerOffset = (containerWidth / 2) - (charWidth / 2);
 
+            // Scroll to center the last typed character
             const scrollPosition = (currentPosition * charWidth) - centerOffset;
             sentenceContainer.scrollLeft = Math.max(0, Math.min(scrollPosition, totalTextWidth - containerWidth));
         });
@@ -217,20 +217,24 @@
             if (event.key === 'Backspace') backspaces++;
         });
 
-
+        // Play a sound when a notification appears
+        const notificationSound = new Audio('sounds/notification.mp3');
 
         // Show a random notification with an image
         const notificationElement = document.getElementById('notification');
         const notificationImages = [
-            "images/notifications/email.png",
-            "images/notifications/linkedin.png",
-            "images/notifications/whatsapp.png"
+            "images/notifications2/email.png",
+            "images/notifications2/canvas.png",
+            "images/notifications2/insta.png",
+            "images/notifications2/tinder.png"
         ];
 
         const showRandomNotification = () => {
             const randomImage = notificationImages[Math.floor(Math.random() * notificationImages.length)];
             notificationElement.innerHTML = `<img src="${randomImage}" alt="Notification">`;
 
+            // Play the notification sound
+            notificationSound.play();
 
             // Clear the notification after 5 seconds
             setTimeout(() => {
@@ -253,29 +257,31 @@
             const wpm = Math.round((wordsTyped / (typingTime / 60000)));
 
             try {
-                await addDoc(collection(db, "typing_tests_notifications"), {
+                await addDoc(collection(db, "typing_tests_sound"), {
                     userId,
                     sentence, // The provided sentence for the test
                     typedSentence: typedText.value.trim(), // Add the typed sentence
                     typingTime,
-                    testOrder,
                     wordsTyped,
+                    testOrder,
                     blocks,
                     timestamp: serverTimestamp()
                 });
+                const params = new URLSearchParams(window.location.search);
+
                 if (userId && testOrder && testOrder.length > 0) {
                     // Check the first item in the test order array and navigate accordingly
-                    if (testOrder[0] === 'notification') {
+                    if (testOrder[0] === 'sound') {
                         window.location.href = `test2.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
-                    } else if (testOrder[1] === 'notification') {
+                    } else if (testOrder[1] === 'sound') {
                         window.location.href = `test3.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
-                    } else if (testOrder[2] === 'notification') {
+                    } else if (testOrder[2] === 'sound') {
                         window.location.href = `results.html?userId=${userId}&testOrder=${encodeURIComponent(JSON.stringify(testOrder))}`;
                     }
                 }
             } catch (e) {
                 console.error("Error saving typing test data: ", e);
-                alert("Er is iets misgegaan. Probeer opnieuw.");
+                alert(`Er is iets misgegaan: ${e.message}`);
             }
         }
     </script>
